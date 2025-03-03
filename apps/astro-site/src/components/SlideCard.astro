@@ -3,7 +3,7 @@ import type { SlideMetadata } from '../utils/slides';
 import { getSlideHtmlUrl, getSlidePdfUrl } from '../utils/slides';
 
 interface Props {
-  slide: SlideMetadata;
+	slide: SlideMetadata;
 }
 
 const { slide } = Astro.props;
@@ -15,7 +15,6 @@ const pdfUrl = getSlidePdfUrl(slide.slug);
   <div class="content">
     <h2 class="title">{slide.title}</h2>
     <p class="description">{slide.description}</p>
-    {slide.author && <p class="author">作成者: {slide.author}</p>}
     {slide.date && <p class="date">作成日: {slide.date}</p>}
     {slide.tags && slide.tags.length > 0 && (
       <div class="tags">
