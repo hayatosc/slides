@@ -9,7 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.4.1",
+  "packageManager": "pnpm@10.5.2",
   "dependencies": {
     "@slidev/cli": "^51.3.0",
     "@slidev/theme-default": "*",
@@ -18,8 +18,11 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "esbuild",
-      "vue-demi"
+      "@biomejs/biome",
+      "esbuild"
     ]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
   }
 }
