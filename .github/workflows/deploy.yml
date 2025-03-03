@@ -1,0 +1,77 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build Slidev projects
+        run: |
+          for dir in apps/*/; do
+            if [ -f "$dir/slides.md" ] && [[ ! "$dir" == *"_"* ]]; then
+              echo "Building $dir"
+              cd "$dir"
+              pnpm install
+              pnpm exec slidev build
+              pnpm exec slidev export --output slides.pdf
+              cd -
+            fi
+          done
+
+      - name: Build Astro site
+        run: |
+          cd apps/astro-site
+          pnpm build
+
+      - name: Copy slides to Astro dist
+        run: |
+          for dir in apps/*/; do
+            if [ -f "$dir/slides.md" ] && [[ ! "$dir" == *"_"* ]]; then
+              dirname=$(basename "$dir")
+              mkdir -p "apps/astro-site/dist/$dirname"
+              cp -r "$dir/dist/"* "apps/astro-site/dist/$dirname/"
+              cp "$dir/slides.pdf" "apps/astro-site/dist/$dirname/"
+            fi
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/astro-site/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

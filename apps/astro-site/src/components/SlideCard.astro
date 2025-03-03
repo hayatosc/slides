@@ -1,0 +1,114 @@
+---
+import type { SlideMetadata } from '../utils/slides';
+import { getSlideHtmlUrl, getSlidePdfUrl } from '../utils/slides';
+
+interface Props {
+  slide: SlideMetadata;
+}
+
+const { slide } = Astro.props;
+const htmlUrl = getSlideHtmlUrl(slide.slug);
+const pdfUrl = getSlidePdfUrl(slide.slug);
+---
+
+<article class="slide-card">
+  <div class="content">
+    <h2 class="title">{slide.title}</h2>
+    <p class="description">{slide.description}</p>
+    {slide.author && <p class="author">作成者: {slide.author}</p>}
+    {slide.date && <p class="date">作成日: {slide.date}</p>}
+    {slide.tags && slide.tags.length > 0 && (
+      <div class="tags">
+        {slide.tags.map(tag => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+    )}
+    <div class="actions">
+      <a href={htmlUrl} class="button">HTMLで見る</a>
+      <a href={pdfUrl} class="button">PDFをダウンロード</a>
+    </div>
+  </div>
+</article>
+
+<style>
+  .slide-card {
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .slide-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .title {
+    font-size: 1.5rem;
+    margin: 0 0 0.5rem 0;
+    color: #333;
+  }
+
+  .description {
+    color: #666;
+    margin: 0.5rem 0;
+  }
+
+  .author, .date {
+    color: #888;
+    font-size: 0.9rem;
+    margin: 0.25rem 0;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+  }
+
+  .tag {
+    background: #f0f0f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+  .actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+  }
+
+  .button:first-child {
+    background-color: #0070f3;
+    color: white;
+  }
+
+  .button:first-child:hover {
+    background-color: #0051cc;
+  }
+
+  .button:last-child {
+    background-color: #f5f5f5;
+    color: #333;
+  }
+
+  .button:last-child:hover {
+    background-color: #e5e5e5;
+  }
+</style>
