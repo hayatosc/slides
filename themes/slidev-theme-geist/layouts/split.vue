@@ -7,6 +7,6 @@
 <style>
 .split {
     height: 100%;
-    @apply grid grid-cols-2 gap-8;
+    @apply absolute grid grid-cols-2 gap-8 left-8;
 }
 </style>

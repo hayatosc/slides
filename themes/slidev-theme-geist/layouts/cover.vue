@@ -8,7 +8,7 @@
 
 <style>
 .cover {
-    @apply flex h-full;
+    @apply absolute flex h-full left-8;
 }
 
 .cover h1 {

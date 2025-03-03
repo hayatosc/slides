@@ -1,6 +1,8 @@
 ---
 theme: slidev-theme-geist
 title: Welcome to Slidev
+description: This is sample slides.
+date: 2000-01-01
 drawings:
   persist: false
 fonts:
