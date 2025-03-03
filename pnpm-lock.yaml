@@ -25,7 +25,7 @@ importers:
         specifier: ^1.9.4
         version: 1.9.4
 
-  slides/slide-sample:
+  apps/slide-sample:
     dependencies:
       slidev-theme-geist:
         specifier: workspace:*
