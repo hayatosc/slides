@@ -200,3 +200,52 @@ export function funcB (a: number, b: number): number {
 - Viteならrollup-plugin-visualizer
 
 <img src="https://cloud.githubusercontent.com/assets/302213/20628702/93f72404-b338-11e6-92d4-9a365550a701.gif" width="60%" class="m-auto" />
+
+---
+
+# 解決策② Code Splittingを使う
+
+- ReactなどのSPAフレームワークは、全てのファイルを1つにまとめようとする
+- バンドルサイズが大きい部分を使わざるを得ない場合、コード分割をして遅延読み込みするようにするとパフォーマンス劣化を最小限に抑えられるようになる
+
+## Reactの場合
+
+`lazy`を活用
+
+```tsx
+import { Suspense, lazy } from 'react'
+
+const LazyComponent = lazy(()　=>　import('component'))
+
+export default function Load() {
+  return (
+    <Suspense fallback={<p>Loading</p>}>
+      <LazyComponent />
+    </Suspense>
+  )
+}
+```
+
+---
+
+# ③ SSRにする
+
+- そもそもReact自体が大きなライブラリ
+  - 読み込み→仮想DOM作成→DOMの描画となるため時間がかかる
+- SPAの仕様上バンドルサイズが大きくなってしまう
+- サーバーで描画してからそれを受け取れば良いのでは？(Server-Side Rendering: SSR)
+- 有名なライブラリ
+  - Next.js
+  - Remix
+
+---
+
+# まとめ
+
+バンドルサイズを減らすために
+
+- ライブラリがTree-Shakingできるか確認する
+- ダメそうならコード分割を試す
+- **簡単なロジックならライブラリに頼らず自分で書く** ←重要
+
+更にパフォーマンスを上げるならSSRに移行しよう！
