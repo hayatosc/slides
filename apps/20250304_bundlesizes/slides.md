@@ -198,3 +198,5 @@ export function funcB (a: number, b: number): number {
 
 - Webpackならwebpack-bundle-analyzer
 - Viteならrollup-plugin-visualizer
+
+<img src="https://cloud.githubusercontent.com/assets/302213/20628702/93f72404-b338-11e6-92d4-9a365550a701.gif" width="60%" class="m-auto" />
