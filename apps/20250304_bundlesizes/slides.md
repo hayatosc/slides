@@ -215,8 +215,7 @@ export function funcB (a: number, b: number): number {
 ```tsx
 import { Suspense, lazy } from 'react'
 
-const LazyComponent = lazy(()　=>　import('component'))
-
+const LazyComponent = lazy(() => import('component'))
 export default function Load() {
   return (
     <Suspense fallback={<p>Loading</p>}>
