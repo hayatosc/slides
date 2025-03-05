@@ -9,7 +9,7 @@ fonts:
   sans: Noto Sans JP
 transition: slide-left
 mdc: true
-colorSchema: dark
+colorSchema: light
 ---
 
 <h1>Webのパフォーマンスと<br/>バンドルサイズの話</h1>

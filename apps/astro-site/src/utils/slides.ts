@@ -57,7 +57,7 @@ export async function getAllSlideMetadata(): Promise<SlideMetadata[]> {
  * スライドのHTMLバージョンのURLを生成
  */
 export function getSlideHtmlUrl(slug: string): string {
-	return `/slides/${slug}/index.html`;
+	return `/slides/slides/${slug}/index.html`;
 }
 
 /**

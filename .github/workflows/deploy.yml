@@ -41,17 +41,17 @@ jobs:
         run: |          
           # まず各Slidevプロジェクトをビルド
           for dir in apps/*/; do
-            if [ -f "$dir/slides.md" ] && [[ ! "$dir" == "_"* ]] && [[ ! "$dir" == "apps/astro-site/"* ]]; then
+            if [ -f "$dir/slides.md" ] && [[ ! "$(basename "$dir")" == _* ]] && [[ ! "$dir" == "apps/astro-site/"* ]]; then
               echo "Building $dir"
               cd "$dir"
+              dirname=$(basename "$dir")
               pnpm install
-              pnpm exec slidev build
+              pnpm exec slidev build --base /slides/slides/$dirname
               pnpm exec slidev export --output slides.pdf
               
               echo "Build completed for $dir"
               
               # Astroのpublicディレクトリにコピー（静的ファイルとして扱われる）
-              dirname=$(basename "$dir")
               mkdir -p "../astro-site/public/slides/$dirname"
               cp -rv dist/* "../astro-site/public/slides/$dirname/"
               cp -v slides.pdf "../astro-site/public/slides/$dirname/"
