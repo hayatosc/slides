@@ -53,9 +53,9 @@ jobs:
               
               # 直接Astroのdistディレクトリにコピー
               dirname=$(basename "$dir")
-              mkdir -p "../astro-site/dist/slides/$dirname"
-              cp -rv dist/* "../astro-site/dist/slides/$dirname/"
-              cp -v slides.pdf "../astro-site/dist/slides/$dirname/"
+              mkdir -p "apps/astro-site/dist/slides/$dirname"
+              cp -rv dist/* "apps/astro-site/dist/slides/$dirname/"
+              cp -v slides.pdf "apps/astro-site/dist/slides/$dirname/"
               
               cd "$GITHUB_WORKSPACE"
             fi
