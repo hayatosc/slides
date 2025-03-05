@@ -33,8 +33,12 @@ jobs:
 
       - name: Build Slidev projects
         run: |
+          # ワークスペースルートの絶対パスを取得
+          WORKSPACE_ROOT="$GITHUB_WORKSPACE"
+          
           # 一時ディレクトリを作成してスライドを保存
-          mkdir -p tmp/slides
+          mkdir -p "$WORKSPACE_ROOT/tmp/slides"
+          
           for dir in apps/*/; do
             if [ -f "$dir/slides.md" ] && [[ ! "$dir" == *"_"* ]]; then
               echo "Building $dir"
@@ -45,10 +49,10 @@ jobs:
               
               # 一時ディレクトリにコピー
               dirname=$(basename "$dir")
-              mkdir -p "../../tmp/slides/$dirname"
-              cp -r dist/* "../../tmp/slides/$dirname/"
-              cp slides.pdf "../../tmp/slides/$dirname/"
-              cd -
+              mkdir -p "$WORKSPACE_ROOT/tmp/slides/$dirname"
+              cp -r dist/* "$WORKSPACE_ROOT/tmp/slides/$dirname/"
+              cp slides.pdf "$WORKSPACE_ROOT/tmp/slides/$dirname/"
+              cd "$WORKSPACE_ROOT"
             fi
           done
 
@@ -59,20 +63,34 @@ jobs:
 
       - name: Copy slides to Astro dist
         run: |
+          # ワークスペースルートの絶対パスを取得
+          WORKSPACE_ROOT="$GITHUB_WORKSPACE"
+          
           # スライド用ディレクトリを作成
-          mkdir -p apps/astro-site/dist/slides
+          mkdir -p "$WORKSPACE_ROOT/apps/astro-site/dist/slides"
           
           # 一時保存したスライドをAstro distディレクトリにコピー
           echo "Copying slides to dist/slides directory..."
-          cp -rv tmp/slides/* apps/astro-site/dist/slides/
+          echo "Content of tmp/slides directory:"
+          ls -la "$WORKSPACE_ROOT/tmp/slides"
+          
+          cp -rv "$WORKSPACE_ROOT/tmp/slides/"* "$WORKSPACE_ROOT/apps/astro-site/dist/slides/"
 
       - name: Check File Tree
         run: |
-          echo "=== File Tree ==="
-          find apps/astro-site/dist -type f | sed 's|apps/astro-site/dist/||'
+          WORKSPACE_ROOT="$GITHUB_WORKSPACE"
+          
+          echo "=== Temporary Directory Content ==="
+          ls -laR "$WORKSPACE_ROOT/tmp/slides"
+          
+          echo -e "\n=== Final File Tree ==="
+          find "$WORKSPACE_ROOT/apps/astro-site/dist" -type f | sed "s|$WORKSPACE_ROOT/apps/astro-site/dist/||"
           
           echo -e "\n=== Directory Structure with Sizes ==="
-          du -ah apps/astro-site/dist
+          du -ah "$WORKSPACE_ROOT/apps/astro-site/dist"
+          
+          echo -e "\n=== Slides Directory Content ==="
+          ls -laR "$WORKSPACE_ROOT/apps/astro-site/dist/slides"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
