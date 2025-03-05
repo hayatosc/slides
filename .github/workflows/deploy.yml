@@ -33,12 +33,12 @@ jobs:
 
       - name: Build Slidev projects
         run: |
-          # ワークスペースルートの絶対パスを取得
-          WORKSPACE_ROOT="$GITHUB_WORKSPACE"
+          echo "Current working directory: $PWD"
+          echo "GitHub workspace: $GITHUB_WORKSPACE"
+          echo "Listing current directory:"
+          ls -la
           
-          # 一時ディレクトリを作成してスライドを保存
-          mkdir -p "$WORKSPACE_ROOT/tmp/slides"
-          
+          # Slidevプロジェクトをビルド
           for dir in apps/*/; do
             if [ -f "$dir/slides.md" ] && [[ ! "$dir" == *"_"* ]]; then
               echo "Building $dir"
@@ -47,12 +47,17 @@ jobs:
               pnpm exec slidev build
               pnpm exec slidev export --output slides.pdf
               
-              # 一時ディレクトリにコピー
+              echo "Build completed for $dir"
+              echo "Contents of dist:"
+              ls -la dist
+              
+              # 直接Astroのdistディレクトリにコピー
               dirname=$(basename "$dir")
-              mkdir -p "$WORKSPACE_ROOT/tmp/slides/$dirname"
-              cp -r dist/* "$WORKSPACE_ROOT/tmp/slides/$dirname/"
-              cp slides.pdf "$WORKSPACE_ROOT/tmp/slides/$dirname/"
-              cd "$WORKSPACE_ROOT"
+              mkdir -p "../astro-site/dist/slides/$dirname"
+              cp -rv dist/* "../astro-site/dist/slides/$dirname/"
+              cp -v slides.pdf "../astro-site/dist/slides/$dirname/"
+              
+              cd "$GITHUB_WORKSPACE"
             fi
           done
 
@@ -61,36 +66,17 @@ jobs:
           cd apps/astro-site
           pnpm build
 
-      - name: Copy slides to Astro dist
-        run: |
-          # ワークスペースルートの絶対パスを取得
-          WORKSPACE_ROOT="$GITHUB_WORKSPACE"
-          
-          # スライド用ディレクトリを作成
-          mkdir -p "$WORKSPACE_ROOT/apps/astro-site/dist/slides"
-          
-          # 一時保存したスライドをAstro distディレクトリにコピー
-          echo "Copying slides to dist/slides directory..."
-          echo "Content of tmp/slides directory:"
-          ls -la "$WORKSPACE_ROOT/tmp/slides"
-          
-          cp -rv "$WORKSPACE_ROOT/tmp/slides/"* "$WORKSPACE_ROOT/apps/astro-site/dist/slides/"
-
       - name: Check File Tree
         run: |
-          WORKSPACE_ROOT="$GITHUB_WORKSPACE"
+          echo "=== Current directory structure ==="
+          pwd
+          ls -laR apps/astro-site/dist
           
-          echo "=== Temporary Directory Content ==="
-          ls -laR "$WORKSPACE_ROOT/tmp/slides"
-          
-          echo -e "\n=== Final File Tree ==="
-          find "$WORKSPACE_ROOT/apps/astro-site/dist" -type f | sed "s|$WORKSPACE_ROOT/apps/astro-site/dist/||"
+          echo -e "\n=== File Tree ==="
+          find apps/astro-site/dist -type f
           
           echo -e "\n=== Directory Structure with Sizes ==="
-          du -ah "$WORKSPACE_ROOT/apps/astro-site/dist"
-          
-          echo -e "\n=== Slides Directory Content ==="
-          ls -laR "$WORKSPACE_ROOT/apps/astro-site/dist/slides"
+          du -ah apps/astro-site/dist
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
