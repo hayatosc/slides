@@ -34,16 +34,14 @@ jobs:
       - name: Install Playwright Browsers
         run: pnpm dlx playwright install --with-deps
 
-      - name: Build Astro site
-        run: |
-          cd apps/astro-site
-          pnpm build
+      - name: Create slides directory structure
+        run: mkdir -p apps/astro-site/public/slides
 
       - name: Build Slidev projects
         run: |          
-          # Slidevプロジェクトをビルド
+          # まず各Slidevプロジェクトをビルド
           for dir in apps/*/; do
-            if [ -f "$dir/slides.md" ] && [[ ! "$dir" == _* ]]; then
+            if [ -f "$dir/slides.md" ] && [[ ! "$dir" == "_"* ]] && [[ ! "$dir" == "apps/astro-site/"* ]]; then
               echo "Building $dir"
               cd "$dir"
               pnpm install
@@ -51,23 +49,32 @@ jobs:
               pnpm exec slidev export --output slides.pdf
               
               echo "Build completed for $dir"
-              echo "Contents of dist:"
-              ls -la dist
               
-              # 直接Astroのdistディレクトリにコピー
+              # Astroのpublicディレクトリにコピー（静的ファイルとして扱われる）
               dirname=$(basename "$dir")
-              mkdir -p "apps/astro-site/dist/slides/$dirname"
-              cp -rv dist/* "apps/astro-site/dist/slides/$dirname/"
-              cp -v slides.pdf "apps/astro-site/dist/slides/$dirname/"
+              mkdir -p "../astro-site/public/slides/$dirname"
+              cp -rv dist/* "../astro-site/public/slides/$dirname/"
+              cp -v slides.pdf "../astro-site/public/slides/$dirname/"
               
               cd "$GITHUB_WORKSPACE"
             fi
           done
 
+      - name: Build Astro site
+        run: |
+          cd apps/astro-site
+          pnpm build
+          
+          # 確認のためディレクトリの内容を表示
+          echo "Contents of dist/slides:"
+          ls -la dist/slides || echo "dist/slides does not exist"
+          echo "Contents of public/slides:"
+          ls -la public/slides || echo "public/slides does not exist"
+
       - name: Check File Tree
         run: |
           echo -e "\n=== File Tree ==="
-          find apps/astro-site/dist -type f
+          find apps/astro-site/dist -type f | sort
           
           echo -e "\n=== Directory Structure with Sizes ==="
           du -ah apps/astro-site/dist
