@@ -31,13 +31,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build Slidev projects
+      - name: Build Astro site
         run: |
-          echo "Current working directory: $PWD"
-          echo "GitHub workspace: $GITHUB_WORKSPACE"
-          echo "Listing current directory:"
-          ls -la
-          
+          cd apps/astro-site
+          pnpm build
+
+      - name: Build Slidev projects
+        run: |          
           # Slidevプロジェクトをビルド
           for dir in apps/*/; do
             if [ -f "$dir/slides.md" ] && [[ ! "$dir" == *"_"* ]]; then
@@ -60,11 +60,6 @@ jobs:
               cd "$GITHUB_WORKSPACE"
             fi
           done
-
-      - name: Build Astro site
-        run: |
-          cd apps/astro-site
-          pnpm build
 
       - name: Check File Tree
         run: |
