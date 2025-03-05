@@ -54,9 +54,9 @@ jobs:
           for dir in apps/*/; do
             if [ -f "$dir/slides.md" ] && [[ ! "$dir" == *"_"* ]]; then
               dirname=$(basename "$dir")
-              mkdir -p "apps/astro-site/dist/$dirname"
-              cp -r "$dir/dist/"* "apps/astro-site/dist/$dirname/"
-              cp "$dir/slides.pdf" "apps/astro-site/dist/$dirname/"
+              mkdir -p "apps/astro-site/dist/slides/$dirname"
+              cp -r "$dir/dist/"* "apps/astro-site/dist/slides/$dirname/"
+              cp "$dir/slides.pdf" "apps/astro-site/dist/slides/$dirname/"
             fi
           done
 
