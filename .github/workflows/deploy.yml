@@ -33,6 +33,8 @@ jobs:
 
       - name: Build Slidev projects
         run: |
+          # 一時ディレクトリを作成してスライドを保存
+          mkdir -p tmp/slides
           for dir in apps/*/; do
             if [ -f "$dir/slides.md" ] && [[ ! "$dir" == *"_"* ]]; then
               echo "Building $dir"
@@ -40,6 +42,12 @@ jobs:
               pnpm install
               pnpm exec slidev build
               pnpm exec slidev export --output slides.pdf
+              
+              # 一時ディレクトリにコピー
+              dirname=$(basename "$dir")
+              mkdir -p "../../tmp/slides/$dirname"
+              cp -r dist/* "../../tmp/slides/$dirname/"
+              cp slides.pdf "../../tmp/slides/$dirname/"
               cd -
             fi
           done
@@ -51,14 +59,12 @@ jobs:
 
       - name: Copy slides to Astro dist
         run: |
-          for dir in apps/*/; do
-            if [ -f "$dir/slides.md" ] && [[ ! "$dir" == *"_"* ]]; then
-              dirname=$(basename "$dir")
-              mkdir -p "apps/astro-site/dist/slides/$dirname"
-              cp -r "$dir/dist/"* "apps/astro-site/dist/slides/$dirname/"
-              cp "$dir/slides.pdf" "apps/astro-site/dist/slides/$dirname/"
-            fi
-          done
+          # スライド用ディレクトリを作成
+          mkdir -p apps/astro-site/dist/slides
+          
+          # 一時保存したスライドをAstro distディレクトリにコピー
+          echo "Copying slides to dist/slides directory..."
+          cp -rv tmp/slides/* apps/astro-site/dist/slides/
 
       - name: Check File Tree
         run: |
@@ -67,9 +73,6 @@ jobs:
           
           echo -e "\n=== Directory Structure with Sizes ==="
           du -ah apps/astro-site/dist
-
-          echo -e "\n=== Content of index.html ==="
-          cat apps/astro-site/dist/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
