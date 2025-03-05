@@ -60,6 +60,17 @@ jobs:
             fi
           done
 
+      - name: Check File Tree
+        run: |
+          echo "=== File Tree ==="
+          find apps/astro-site/dist -type f | sed 's|apps/astro-site/dist/||'
+          
+          echo -e "\n=== Directory Structure with Sizes ==="
+          du -ah apps/astro-site/dist
+
+          echo -e "\n=== Content of index.html ==="
+          cat apps/astro-site/dist/index.html
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
