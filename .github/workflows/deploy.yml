@@ -31,6 +31,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Install Playwright Browsers
+        run: pnpm dlx playwright install --with-deps
+
       - name: Build Astro site
         run: |
           cd apps/astro-site
